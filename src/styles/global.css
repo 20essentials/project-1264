@@ -1,0 +1,15 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+body {
+  background-image: radial-gradient(circle at top left, #67b26f, transparent 60%),
+    radial-gradient(circle at top right, #4ca2cd, transparent 60%);
+  height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  place-content: center;
+  overflow: hidden;
+}

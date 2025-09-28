@@ -1,0 +1,96 @@
+---
+import Camera from './Camera.astro';
+---
+
+<Camera />
+
+<section class='am-container-photo'></section>
+
+<style is:global>
+  .am-container-photo {
+    width: 500px;
+    height: 500px;
+    position: relative;
+    perspective: 300px;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .square {
+      position: absolute;
+      width: var(--width);
+      height: var(--height);
+      top: var(--top);
+      left: var(--left);
+      background-image: var(--bg-image);
+      background-position: var(--bg-position);
+      z-index: 3;
+    }
+  }
+</style>
+
+<script>
+  import { $, baseUrl } from '@/utils/functions';
+  import gsap from 'gsap';
+
+  const srcImage = baseUrl('/assets/f1.avif');
+  const $containerPhoto = $<HTMLElement>('.am-container-photo');
+
+  const ROWS = 20;
+  const COLUMNS = 20;
+  const background_X_size = 100 / (COLUMNS + 1);
+  const background_Y_size = 100 / (ROWS + 1);
+
+  const squareWidth = $containerPhoto.scrollWidth / ROWS;
+  const squareHeight = $containerPhoto.scrollHeight / ROWS;
+
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLUMNS; col++) {
+      const square = document.createElement('aside');
+      square.classList.add('square');
+      square.style.setProperty('--width', `${squareWidth}px`);
+      square.style.setProperty('--height', `${squareHeight}px`);
+      square.style.setProperty('--top', `${row * squareWidth}px`);
+      square.style.setProperty('--left', `${col * squareHeight}px`);
+      square.style.setProperty('--bg-image', `url(${srcImage})`);
+      square.style.setProperty(
+        '--bg-position',
+        `${background_X_size * col}% ${background_Y_size * row}%`
+      );
+
+      $containerPhoto.appendChild(square);
+    }
+  }
+
+const tl = gsap.timeline({ paused: true }).to(".square", {
+  duration: 1,
+  ease: "power2.inOut",
+  repeat: -1, // usa -1 para infinito, -0.5 no es válido
+  yoyo: true,
+  repeatDelay: 1,
+  rotate: 135,
+  scale: 0,
+  opacity: 0,
+  x: "random(-150, 150)", // movimiento random en eje X
+  y: "random(-150, 150)", // movimiento random en eje Y
+  stagger: {
+    amount: 1.5,
+    grid: "auto",
+    from: "edges"
+  }
+});
+
+  $containerPhoto.addEventListener('mouseenter', () => {
+    tl.play();
+  });
+
+  $containerPhoto.addEventListener('mouseleave', () => {
+    tl.reverse();
+  });
+</script>
